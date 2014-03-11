@@ -17,5 +17,8 @@ class waiter(Thread):
 def run():
     worker().start()
     waiter().start()
+
     
 run()
+worker().join()
+print('hello, world')
