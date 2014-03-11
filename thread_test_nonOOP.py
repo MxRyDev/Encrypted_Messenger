@@ -2,7 +2,7 @@ from threading import Thread
 import time
 
 threadBreak = False
-def Timer_function():
+def TimeProcess():
     while not threadBreak:
         print(time.time() - startTime)
         time.sleep(1)
