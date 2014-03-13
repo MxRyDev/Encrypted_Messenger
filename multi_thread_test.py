@@ -20,5 +20,5 @@ def run():
 
     
 run()
-worker().join()
+
 print('hello, world')

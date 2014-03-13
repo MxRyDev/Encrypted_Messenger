@@ -24,3 +24,4 @@ while 1:
         data = str.encode(data)
         conn.sendall(data)
         data = ""
+        
