@@ -47,7 +47,7 @@ time.sleep(1)
 print ("          ===Starting Listening Sequence===\n")
 s.listen(5)
 
-def listeningthread(s):
+def listening(s):
     while True:
         for i in range(10):
             print("Listening" + "." * i)
@@ -57,7 +57,11 @@ def listeningthread(s):
             #sys.stdout.write("\033[F")
             sys.stdout.write("                   ")
             i = 0
-            listeningthread(s)
+            listening(s)
+            
+listening_thread = Thread(target=listening(s))
+listening_thread.start()
+
 
 # Need to convert this to Python3            
 #start_new_thread(listeningthread,(s,)) 
