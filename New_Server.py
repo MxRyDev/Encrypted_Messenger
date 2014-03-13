@@ -7,7 +7,7 @@ import sys
 # initialize Variables:
 
 HOST = ''
-PORT = 5005
+PORT = 5006
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
 print ('====================SOCKET CREATED====================\n')
 
@@ -47,9 +47,20 @@ time.sleep(1)
 print ("          ===Starting Listening Sequence===\n")
 s.listen(5)
 
+def listeningthread(s):
+    while True:
+        for i in range(10):
+            print("Listening" + "." * i)
+            sys.stdout.write("\033[F") # Cursor up one line
+            time.sleep(1)
+        if i == 9:
+            #sys.stdout.write("\033[F")
+            sys.stdout.write("                   ")
+            i = 0
+            listeningthread(s)
 
-print ("Socket Created")
-
+# Need to convert this to Python3            
+#start_new_thread(listeningthread,(s,)) 
 
 # Create empty lists to store connected IP's/Messages
 clients = []
