@@ -1,5 +1,6 @@
 from threading import Thread
 import socket
+import time
 import sys
 
 
@@ -8,12 +9,42 @@ import sys
 HOST = ''
 PORT = 5005
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
+print ('====================SOCKET CREATED====================\n')
+
+time.sleep(1)
+print ("               =====Binding Ports=====") 
 s.bind((HOST, PORT))
 
 global conn, addr
 conn, addr = '', ''
 
 # listen on created socket
+time.sleep(2)
+print ('              >-[                   ]-<')
+time.sleep(.3)
+print ('              >--[                 ]--<')
+time.sleep(.3)
+print ('              >---[               ]---<')
+time.sleep(.3)
+print ('              >----[             ]----<')
+time.sleep(.3)
+print ('              >-----[           ]-----<')
+time.sleep(.3)
+print ('              >------[         ]------<')
+time.sleep(.3)
+print ('              >-------[       ]-------<')
+time.sleep(.3)
+print ('              >--------[     ]--------<')
+time.sleep(.3)
+print ('              >---------[   ]---------<')  
+time.sleep(.3)
+print ('              >----------[ ]----------<')
+time.sleep(.3)
+print ('              >----------[=]----------<\n')
+time.sleep(.5)
+print ('=================Socket Bind Complete=================\n')
+time.sleep(1)
+print ("          ===Starting Listening Sequence===\n")
 s.listen(5)
 
 
