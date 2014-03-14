@@ -9,6 +9,7 @@ import time, sys, os
 HOST = ''
 PORT = 5007
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
+toolbar_width = 40
 print ('====================SOCKET CREATED====================\n')
 
 time.sleep(1)
@@ -128,14 +129,40 @@ while True:
     admin = input('>>')
     
     if (admin == 'close') or (admin == 'exit'):
-        print ('==============STARTING SHUTDOWN SEQUENCE=============')
+        print ('==============STARTING SHUTDOWN SEQUENCE=============\n')
+        # setup toolbar
+        sys.stdout.write("[%s]" % (" " * toolbar_width))
+        sys.stdout.flush()
+        sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
+
+        for i in range(toolbar_width):
+            time.sleep(0.05)
+            # update the bar
+            sys.stdout.write("#")
+            sys.stdout.flush()
+
+        sys.stdout.write("\n")
         if clients != []:
             s.shutdown(1)
         time.sleep(1)
-        print ('DISENGAGING TCP LOCK...\n')
+        
+        print ('\nDISENGAGING TCP LOCK...\n')
+        # setup toolbar
+        sys.stdout.write("[%s]" % (" " * toolbar_width))
+        sys.stdout.flush()
+        sys.stdout.write("\b" * (toolbar_width+1))
+
+        for i in range(toolbar_width):
+            time.sleep(0.01)
+            # update the bar
+            sys.stdout.write("#")
+            sys.stdout.flush()
+
+        sys.stdout.write("\n")
         snd_and_rcv.terminate()
         time.sleep(1)
-        print ('UN-BINDING PORTS...\n')
+        
+        print ('\nUN-BINDING PORTS...\n')
         print ('              >----------[=]----------<')
         time.sleep(.1)
         print ('              >----------[ ]----------<')
@@ -159,12 +186,25 @@ while True:
         print ('              >-[                   ]-<')
         accept_connections.terminate()
         time.sleep(1)
-        print ('PERFORMING CLEANUP PROCESS...\n')
+        print ('\nPERFORMING CLEANUP PROCESS...\n')
+        # setup toolbar
+        sys.stdout.write("[%s]" % (" " * toolbar_width))
+        sys.stdout.flush()
+        sys.stdout.write("\b" * (toolbar_width+1))
+
+        for i in range(toolbar_width):
+            time.sleep(0.03)
+            # update the bar
+            sys.stdout.write("#")
+            sys.stdout.flush()
+
+        sys.stdout.write("\n")
         # Clearing lists
         clients = []
         message_queue = []
         time.sleep(1)
-        print ('CLOSING SOCKET...\n')
+        
+        print ('\nCLOSING SOCKET...\n')
         s.close()
         time.sleep(1)
         print ('goodbye.')
