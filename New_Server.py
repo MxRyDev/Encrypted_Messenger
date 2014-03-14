@@ -1,4 +1,5 @@
 from threading import Thread
+from multiprocessing import Process
 import socket
 import time, sys, os
 
@@ -42,36 +43,10 @@ time.sleep(.3)
 print ('              >----------[=]----------<\n')
 time.sleep(.5)
 print ('==================TCP LOCK INITIATED==================\n')
-
-def spinner(delay):
-    for char in '/-\|':        
-      sys.stdout.write("                           "+char)
-      sys.stdout.flush()
-      sys.stdout.write("\b" * 28)
-      time.sleep(delay)
-
-print ("                   'ENTER'to lock\n")
-lock = 1
-spinner(.3)
-lock = input()
-lock = 2
-spinner(.3)
-lock = input()
-lock = 3
-spinner(.3)
-lock = input()
-lock = 4
-spinner(.3)
-lock = input()
-lock = 5
-if lock == 5:
-    for x in range(0,10):
-        spinner(.05)
-    print ("                          \ /\n")
-    #print ("========================LOCKED========================\n")
-    print ("                    ##############")
-    print ("                    ####LOCKED####")
-    print ("                    ##############")
+time.sleep(1)
+print ("                    ##############")
+print ("                    ####LOCKED####")
+print ("                    ##############")
 time.sleep(1)    
 print ('==================Port Bind Complete==================\n')
 time.sleep(1)
@@ -100,7 +75,6 @@ def listening(s):
 # Create empty lists to store connected IP's/Messages
 clients = []
 message_queue = []
-
 # Will run on its own thread, listening for new connections,
 # and adding connecting ip's to 'clients' list.
 def client_connect():
@@ -111,10 +85,12 @@ def client_connect():
         clients.append(conn)
         
         
+        
 def msg_snd(sender, msg):
     for client in clients:
         if sender != client:
             sender.send(msg)
+            
         
         
 def msg_snd_rcv():
@@ -128,11 +104,12 @@ def msg_snd_rcv():
                 messages.append((sender, msg))
             for message in msg:
                 msg_snd(message)
+        
     
     
 
-accept_connections = Thread(target = client_connect)
-snd_and_rcv = Thread(target =  msg_snd_rcv)
+accept_connections = Process(target = client_connect)
+snd_and_rcv = Process(target =  msg_snd_rcv)
 time.sleep(1)
 print('\n')
 
@@ -156,7 +133,7 @@ while True:
             s.shutdown(1)
         time.sleep(1)
         print ('DISENGAGING TCP LOCK...\n')
-
+        snd_and_rcv.terminate()
         time.sleep(1)
         print ('UN-BINDING PORTS...\n')
         print ('              >----------[=]----------<')
@@ -180,7 +157,7 @@ while True:
         print ('              >--[                 ]--<')
         time.sleep(.1)
         print ('              >-[                   ]-<')
-      
+        accept_connections.terminate()
         time.sleep(1)
         print ('PERFORMING CLEANUP PROCESS...\n')
         # Clearing lists
