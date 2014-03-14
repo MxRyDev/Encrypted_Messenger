@@ -7,7 +7,7 @@ import time, sys, os
 # initialize Variables:
 
 HOST = ''
-PORT = 5007
+PORT = 56835
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
 toolbar_width = 40
 print ('====================SOCKET CREATED====================\n')
