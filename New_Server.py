@@ -1,15 +1,17 @@
 from threading import Thread
-from multiprocessing import Process
 import socket
 import time, sys, os
+import fluff
 
 
 # initialize Variables:
 
 HOST = ''
-PORT = 56835
+PORT = 5009
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
-toolbar_width = 40
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+running_connect = True
+running_msg = True
 print ('====================SOCKET CREATED====================\n')
 
 time.sleep(1)
@@ -20,58 +22,11 @@ global conn, addr
 conn, addr = '', ''
 
 # listen on created socket
-time.sleep(2)
-print ('              >-[                   ]-<')
-time.sleep(.3)
-print ('              >--[                 ]--<')
-time.sleep(.3)
-print ('              >---[               ]---<')
-time.sleep(.3)
-print ('              >----[             ]----<')
-time.sleep(.3)
-print ('              >-----[           ]-----<')
-time.sleep(.3)
-print ('              >------[         ]------<')
-time.sleep(.3)
-print ('              >-------[       ]-------<')
-time.sleep(.3)
-print ('              >--------[     ]--------<')
-time.sleep(.3)
-print ('              >---------[   ]---------<')  
-time.sleep(.3)
-print ('              >----------[ ]----------<')
-time.sleep(.3)
-print ('              >----------[=]----------<\n')
-time.sleep(.5)
-print ('==================TCP LOCK INITIATED==================\n')
-time.sleep(1)
-print ("                    ##############")
-print ("                    ####LOCKED####")
-print ("                    ##############")
-time.sleep(1)    
-print ('==================Port Bind Complete==================\n')
-time.sleep(1)
+fluff.bindPorts()
+
 print ("          ===Starting Listening Sequence===\n")
 s.listen(5)
-
-def listening(s):
-    while True:
-        for i in range(10):
-            print("Listening" + "." * i)
-            sys.stdout.write("\033[F") # Cursor up one line
-            time.sleep(1)
-        if i == 9:
-            #sys.stdout.write("\033[F")
-            sys.stdout.write("                   ")
-            i = 0
-            listening(s)
-            
-#listening_thread = Thread(target=listening(s))
-#listening_thread.start()
-
-
-# Need to convert this to Python3            
-#start_new_thread(listeningthread,(s,)) 
+ 
 
 # Create empty lists to store connected IP's/Messages
 clients = []
@@ -79,11 +34,14 @@ message_queue = []
 # Will run on its own thread, listening for new connections,
 # and adding connecting ip's to 'clients' list.
 def client_connect():
-    while True:
-        print ("Socket Listening...")
-        conn, addr = s.accept()
-        print('Connected by', addr[0] + ':' + str(addr[1]))
-        clients.append(conn)
+    while running_connect:
+        try:
+            print ("Socket Listening...")
+            conn, addr = s.accept()
+            print('Connected by', addr[0] + ':' + str(addr[1]))
+            clients.append(conn)
+        except (OSError):
+            pass
         
         
         
@@ -95,8 +53,7 @@ def msg_snd(sender, msg):
         
         
 def msg_snd_rcv():
-    
-    while True:
+    while running_msg:
         for client in clients:
             msg = client.recv(1024)
             msg = msg.decode(encoding= 'UTF-8')
@@ -109,16 +66,18 @@ def msg_snd_rcv():
     
     
 
-accept_connections = Process(target = client_connect)
-snd_and_rcv = Process(target =  msg_snd_rcv)
+accept_connections = Thread(target = client_connect)
+snd_and_rcv = Thread(target =  msg_snd_rcv)
 time.sleep(1)
 print('\n')
 
+#accept_connections.setDaemon(True)
 accept_connections.start()
 print('accepting connections...')
 time.sleep(1)
 print('\n')
 
+#snd_and_rcv.setDaemon(True)
 snd_and_rcv.start()
 print('handling messages...\n')
 time.sleep(1)
@@ -128,77 +87,35 @@ print('====================SERVER ONLINE====================')
 while True:
     admin = input('>>')
     
-    if (admin == 'close') or (admin == 'exit'):
+    if admin == 'exit':
         print ('==============STARTING SHUTDOWN SEQUENCE=============\n')
-        # setup toolbar
-        sys.stdout.write("[%s]" % (" " * toolbar_width))
-        sys.stdout.flush()
-        sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
-
-        for i in range(toolbar_width):
-            time.sleep(0.05)
-            # update the bar
-            sys.stdout.write("#")
-            sys.stdout.flush()
-
-        sys.stdout.write("\n")
+        # setup toolbar with 0.05s
+        fluff.loadBar(0.05)
+        
         if clients != []:
             s.shutdown(1)
         time.sleep(1)
         
         print ('\nDISENGAGING TCP LOCK...\n')
-        # setup toolbar
-        sys.stdout.write("[%s]" % (" " * toolbar_width))
-        sys.stdout.flush()
-        sys.stdout.write("\b" * (toolbar_width+1))
-
-        for i in range(toolbar_width):
-            time.sleep(0.01)
-            # update the bar
-            sys.stdout.write("#")
-            sys.stdout.flush()
-
-        sys.stdout.write("\n")
-        snd_and_rcv.terminate()
+        # setup toolbar with 0.01
+        fluff.loadBar(0.01)
+        
+        #Stop the msg_snd_rcv Thread
+        running_msg = False
+        snd_and_rcv.join()
+        
         time.sleep(1)
         
-        print ('\nUN-BINDING PORTS...\n')
-        print ('              >----------[=]----------<')
-        time.sleep(.1)
-        print ('              >----------[ ]----------<')
-        time.sleep(.1)
-        print ('              >---------[   ]---------<')
-        time.sleep(.1)
-        print ('              >--------[     ]--------<')
-        time.sleep(.1)
-        print ('              >-------[       ]-------<')
-        time.sleep(.1)
-        print ('              >------[         ]------<')
-        time.sleep(.1)
-        print ('              >-----[           ]-----<')
-        time.sleep(.1)
-        print ('              >----[             ]----<')
-        time.sleep(.1)
-        print ('              >---[               ]---<')
-        time.sleep(.1)
-        print ('              >--[                 ]--<')
-        time.sleep(.1)
-        print ('              >-[                   ]-<')
-        accept_connections.terminate()
+        fluff.unbindPorts()
+        
+        #stop the accept_connections Thread
+        running_connect = False
+        
         time.sleep(1)
         print ('\nPERFORMING CLEANUP PROCESS...\n')
-        # setup toolbar
-        sys.stdout.write("[%s]" % (" " * toolbar_width))
-        sys.stdout.flush()
-        sys.stdout.write("\b" * (toolbar_width+1))
-
-        for i in range(toolbar_width):
-            time.sleep(0.03)
-            # update the bar
-            sys.stdout.write("#")
-            sys.stdout.flush()
-
-        sys.stdout.write("\n")
+        # setup toolbar with 0.03s
+        fluff.loadBar(0.03)
+        
         # Clearing lists
         clients = []
         message_queue = []
