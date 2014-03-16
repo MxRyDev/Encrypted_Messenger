@@ -2,6 +2,7 @@ from threading import Thread
 import socket
 import time, sys, os
 import fluff
+from fluff import loadBar
 
 
 # initialize Variables:
@@ -62,10 +63,54 @@ def msg_snd_rcv():
                 messages.append((sender, msg))
             for message in msg:
                 msg_snd(message)
+                
+                
+def shutdown(connected_users):
+    print ('==============STARTING SHUTDOWN SEQUENCE=============\n')
+    # setup toolbar with 0.05s
+    loadBar(0.05)
+    
+    if connected_users:
+        s.shutdown(1)
+    time.sleep(1)
+    
+    print ('\nDISENGAGING TCP LOCK...\n')
+    # setup toolbar with 0.01
+    loadBar(0.01)
+    
+    #Stop the msg_snd_rcv Thread
+    running_msg = False
+    snd_and_rcv.join()
+    
+    time.sleep(1)
+    
+    unbindPorts()
+    
+    #stop the accept_connections Thread
+    running_connect = False
+    
+    time.sleep(1)
+    print ('\nPERFORMING CLEANUP PROCESS...\n')
+    # setup toolbar with 0.03s
+    loadBar(0.03)
+    
+    # Clearing lists
+    clients = []
+    message_queue = []
+    time.sleep(1)
+    
+    print ('\nCLOSING SOCKET...\n')
+    s.close()
+    time.sleep(1)
+    print ('goodbye.')
+    
+    os._exit(1)
         
     
     
 
+
+#::::::::::::::::::::::::::::::: RUNTIME ::::::::::::::::::::::::::::::::::::::::::::::::::
 accept_connections = Thread(target = client_connect)
 snd_and_rcv = Thread(target =  msg_snd_rcv)
 time.sleep(1)
@@ -88,6 +133,6 @@ while True:
     admin = input('>>')
     
     if admin == 'exit':
-        fluff.shutdown()
+        shutdown(clients)
         
 

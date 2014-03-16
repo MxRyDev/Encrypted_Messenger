@@ -98,12 +98,12 @@ def listening(s):
 #listening_thread = Thread(target=listening(s))
 #listening_thread.start()
 
-def shutdown():
+def shutdown(connected_users):
     print ('==============STARTING SHUTDOWN SEQUENCE=============\n')
     # setup toolbar with 0.05s
     loadBar(0.05)
     
-    if clients != []:
+    if connected_users:
         s.shutdown(1)
     time.sleep(1)
     
