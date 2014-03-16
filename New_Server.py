@@ -37,12 +37,12 @@ message_queue = []
 def client_connect():
     while running_connect:
         try:
-            print ("Socket Listening...")
+            print ('Socket Listening...')
             conn, addr = s.accept()
             print('Connected by', addr[0] + ':' + str(addr[1]))
             clients.append(conn)
         except (OSError):
-            pass
+            break
         
         
         
@@ -80,11 +80,11 @@ def shutdown(connected_users):
     
     #Stop the msg_snd_rcv Thread
     running_msg = False
-    snd_and_rcv.join()
+    #snd_and_rcv.join()
     
     time.sleep(1)
     
-    unbindPorts()
+    fluff.unbindPorts()
     
     #stop the accept_connections Thread
     running_connect = False

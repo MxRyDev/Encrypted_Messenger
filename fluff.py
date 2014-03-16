@@ -98,45 +98,5 @@ def listening(s):
 #listening_thread = Thread(target=listening(s))
 #listening_thread.start()
 
-def shutdown(connected_users):
-    print ('==============STARTING SHUTDOWN SEQUENCE=============\n')
-    # setup toolbar with 0.05s
-    loadBar(0.05)
-    
-    if connected_users:
-        s.shutdown(1)
-    time.sleep(1)
-    
-    print ('\nDISENGAGING TCP LOCK...\n')
-    # setup toolbar with 0.01
-    loadBar(0.01)
-    
-    #Stop the msg_snd_rcv Thread
-    running_msg = False
-    snd_and_rcv.join()
-    
-    time.sleep(1)
-    
-    unbindPorts()
-    
-    #stop the accept_connections Thread
-    running_connect = False
-    
-    time.sleep(1)
-    print ('\nPERFORMING CLEANUP PROCESS...\n')
-    # setup toolbar with 0.03s
-    loadBar(0.03)
-    
-    # Clearing lists
-    clients = []
-    message_queue = []
-    time.sleep(1)
-    
-    print ('\nCLOSING SOCKET...\n')
-    s.close()
-    time.sleep(1)
-    print ('goodbye.')
-    
-    os._exit(1)
 
 
