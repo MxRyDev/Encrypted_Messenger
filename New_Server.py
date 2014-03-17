@@ -8,7 +8,7 @@ from fluff import loadBar
 # initialize Variables:
 
 HOST = ''
-PORT = 5009
+PORT = 50009
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 running_connect = True
@@ -45,24 +45,22 @@ def client_connect():
             break
         
         
-        
 def msg_snd(sender, msg):
     for client in clients:
         if sender != client:
             sender.send(msg)
-            
-        
+              
         
 def msg_snd_rcv():
     while running_msg:
         for client in clients:
             msg = client.recv(1024)
             msg = msg.decode(encoding= 'UTF-8')
-            if message:
+            if msg:
                 print('Message recieved from %s:\n%s' % (client, msg))
-                messages.append((sender, msg))
-            for message in msg:
-                msg_snd(message)
+                message_queue.append((client, msg))
+            for message in message_queue:
+                msg_snd(client, message)
                 
                 
 def shutdown(connected_users):
@@ -105,11 +103,8 @@ def shutdown(connected_users):
     print ('goodbye.')
     
     os._exit(1)
-        
-    
-    
 
-
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::: RUNTIME ::::::::::::::::::::::::::::::::::::::::::::::::::
 accept_connections = Thread(target = client_connect)
 snd_and_rcv = Thread(target =  msg_snd_rcv)

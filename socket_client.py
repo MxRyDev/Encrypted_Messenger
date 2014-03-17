@@ -4,15 +4,14 @@
 
 import socket
 
-HOST = '25.197.28.165'
-PORT = 50005
+HOST = '192.168.0.6'
+PORT = 50009
 #USR = input("Username?: \n>>")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
+print('connected to %s on port %s' %(HOST, PORT))
 
 while True:
-    
-    
     message = input("MESSAGE:\n>>")
     #message = USR + ': ' + message
     message = str.encode(message)   
