@@ -17,12 +17,12 @@ while True:
     message = str.encode(message)   
     s.sendall(message)
     
-    #if s.recv(1024):
-        #data = s.recv(1024)
-        #data = data.decode(encoding = 'UTF-8')
-        #print('>>' + data)
-    #else:
-        #print("no new messages")
+    if s.recv(1024):
+        data = s.recv(1024)
+        data = data.decode(encoding = 'UTF-8')
+        print('NEW MESSAGE:\n>>' + data)
+    else:
+        print("no new messages")
         
         
     #s.close()
