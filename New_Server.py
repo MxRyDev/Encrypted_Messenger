@@ -83,34 +83,33 @@ def client_connect():
         try:
             print ('\n\nopen to connections...\n\n')
             conn, addr = s.accept()
+            client = (conn, addr)
             print('Connected by', addr[0] + ':' + str(addr[1]))
-            clients.append(conn)
+            clients.append(client)
         except (OSError):
             break
         
-# sub function of 'msg_snd_rcv';
-# attempts to send messages to all clients except sender
-def msg_snd(sender, msg):
-    for client in clients:
-        if sender != client:
-            print(msg)
-            sender.send(msg)
+
               
 
 # waits for a message and passes them onto the 'msg_send' function
 def msg_snd_rcv():
     while running_msg:
-        for client in clients: # !!! Problem here: Pauses at this line and waits. Only listens to first client!
-            msg = client.recv(1024)
+        for i in clients: # !!! Problem here: Pauses at this line and waits. Only listens to first client!
+            msg = i[0].recv(1024)
             msg_content = msg.decode(encoding= 'UTF-8')
             if msg:
-                print('Message recieved from %s:\nmessage:%s' % (client, msg_content))
-                msg_snd(client, msg)
-                print('Message from %s delivered\nmsg: %s' % (client, msg_content))
+                print('%s:\nmessage:%s' % (i[1], msg_content))
+                msg_snd(i[1], msg)
                 
                 
 
-
+# sub function of 'msg_snd_rcv';
+# attempts to send messages to all clients except sender
+def msg_snd(sender, msg):
+    for i in clients:
+        if sender != i[0]:
+            s.sendto(msg, i)
 
 
 
