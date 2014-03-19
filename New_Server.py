@@ -29,7 +29,7 @@ s.listen(5)
 
 # Create empty lists to store connected IP's/Messages
 clients = []
-message_queue = []
+
 
 #:::::::::::::::::::::::::: DEFINE MAIN FUNCTIONS ::::::::::::::::::::::::::::
 def shutdown(connected_users):
@@ -100,13 +100,11 @@ def msg_snd(sender, msg):
 # waits for a message and passes them onto the 'msg_send' function
 def msg_snd_rcv():
     while running_msg:
-        for client in clients:
+        for client in clients: # !!! Problem here: Pauses at this line and waits. Only listens to first client!
             msg = client.recv(1024)
             msg_content = msg.decode(encoding= 'UTF-8')
             if msg:
                 print('Message recieved from %s:\nmessage:%s' % (client, msg_content))
-                message_queue.append((client, msg))
-            for message in message_queue:
                 msg_snd(client, msg)
                 print('Message from %s delivered\nmsg: %s' % (client, msg_content))
                 
